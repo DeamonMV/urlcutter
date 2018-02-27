@@ -3,18 +3,26 @@ package main
 import (
 	"log"
 	"sync"
-
+	"math/rand"
 	"github.com/nats-io/go-nats-streaming"
+	"time"
+	json2 "encoding/json"
+	"strconv"
+	"fmt"
 )
 
 const azbuka string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 const azbukaLength = len(azbuka)
 
-var codeLenght int = 2
+var codeLenght int = 4
 
 //объявляем перменную  на которую навешиваем WaitGoup, которая позволит завершить все начатые ГОрутины
 var wg sync.WaitGroup
-
+//////////////////////////
+func random(min, max int) int {
+	rand.Seed(time.Now().Unix())
+	return rand.Intn(max - min) + min
+}
 /////////////////////////////////////////////////////////////////
 func powerOf(length int) int {
 	if length == 0 {
@@ -34,14 +42,28 @@ func codeGenerator(codeLenght int, powerOf int, c_codes chan<- string) {
 
 	var indexes = [azbukaLength]int{}
 	var result string
-	//var buffer bytes.Buffer
+
+	type Message struct {
+		Index string
+		Code string
+	}
+
 	for i := 0; i < powerOf; i++ {
 
 		for elOfAzbuka := 0; elOfAzbuka < codeLenght; elOfAzbuka++ {
 			result += string(azbuka[indexes[elOfAzbuka]])
 		}
 
-		c_codes <- result
+		data := &Message{
+			Index: strconv.Itoa(i),
+			Code: result}
+
+		json, err:= json2.Marshal(data)
+		if err != nil{
+			fmt.Printf("Error marshal struc: &v", err)
+		}
+
+		c_codes <- string(json)
 
 		result = ""
 
@@ -97,6 +119,10 @@ func publishMsg(msg string, conn stan.Conn) {
 ////////////////////////////////////////////////////////////////
 
 func main() {
+
+
+
+
 	c_codes := make(chan string)
 	powerof := powerOf(codeLenght)
 	println(powerof)
@@ -105,9 +131,10 @@ func main() {
 	go codeGenerator(codeLenght, powerof, c_codes)
 
 	for msg := range c_codes {
-		// увеличиваем количество ГОрутин, которых надо будет дожлаться закрытие
+		// увеличиваем количество ГОрутин, для которых надо будет дожлаться закрытие
 		wg.Add(1)
 		go publishMsg(msg, conn)
+		time.Sleep(300 * time.Millisecond)
 	}
 	// ждем когда отработают все ГОрутины
 	wg.Wait()
