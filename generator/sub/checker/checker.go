@@ -7,12 +7,12 @@ import (
 )
 
 func Unmarshal(bytes []byte) map[string]string {
-
+	log.Info("Raw JSON, which will be unmarshaled: ", string(bytes))
 	var data map[string]string
 	if err := json.Unmarshal(bytes, &data); err != nil {
 		log.Warn("Error  %v", err)
 	}
-
+	log.Info("Unmarshaled JSON: ", data)
 	return data
 }
 

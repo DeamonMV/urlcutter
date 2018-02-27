@@ -31,7 +31,7 @@ func random(min, max int) int {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 func main() {
 
-	number := random(0, 9)
+number := random(0, 9999)
 clientId := strconv.Itoa(number)
 log.Info("ClientID is: ", clientId)
 
@@ -66,7 +66,7 @@ conn := connect(string(clientId))
 	signal.Notify(signalChan, os.Interrupt)
 	go func() {
 		for range signalChan {
-			log.Info("\nReceived an interrupt, unsubscribing and closing connection...\n\n")
+			log.Info("\nReceived an interrupt and closing connection...\n\n")
 
 			conn.Close()
 			cleanupDone <- true
