@@ -132,17 +132,18 @@ func main() {
 	c_startgen := make(chan int)
 	c_work := make(chan bool)
 	powerof := powerOf(codeLenght)
-	println(powerof)
+//	println(powerof)
+	c_work <- true
 
 	log.Info("Into c_work channel sened true")
-	c_work <- true
-	
+
 	go func(c_startgen chan int, c_work chan bool) bool {
 	conn := connect(clientID())
 	defer conn.Close()
 	defer log.Info("Connection Closed")
 	log.Info("Gorutine with Sub started")
 	for {
+
 		work := <- c_work
 		if work {
 			msgConn := func(m *stan.Msg) {
@@ -186,6 +187,8 @@ go func(c_startgen chan int, c_work chan bool) {
 
 	for {
 		if startgen != 0 {
+			c_work <- false
+
 			for msg := range c_codes {
 				// увеличиваем количество ГОрутин, для которых надо будет дожлаться закрытие
 				wg.Add(1)
@@ -194,6 +197,7 @@ go func(c_startgen chan int, c_work chan bool) {
 			}
 			// ждем когда отработают все ГОрутины
 			wg.Wait()
+			c_work <- true
 		} else
 		{
 			time.Sleep(5 * time.Second)
