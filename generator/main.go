@@ -190,7 +190,7 @@ func main() {
 						wg.Add(1)
 						go publishMsg(msg, conn)
 						log.Info("Message was published: ", msg)
-						time.Sleep(300 * time.Millisecond)
+					//	time.Sleep(300 * time.Millisecond)
 					}
 					log.Info("CodeGen: done code generation")
 				}
