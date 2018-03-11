@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 	"urlcutter/generator/sub/checker"
-
+	"urlcutter/generator/msg-unmarshal"
 	"os"
 	"os/signal"
 )
@@ -144,11 +144,13 @@ func main() {
 		log.Info("Recive data from NATS: ", m)
 
 		mapa := checker.Unmarshal(m.Data)
-		codeint, err := checker.Checker(mapa)
+
+		codeint,err := msg_unmarshal.GeneratorDataCheck(mapa)
 		if err != "" {
 			log.Warn(err)
 		}
-		log.Info("####### CODELEN #########: ", codeint)
+		log.Info("####### CODELEN_1 #########: ", codeint)
+
 		c_startgen <- codeint
 	}
 

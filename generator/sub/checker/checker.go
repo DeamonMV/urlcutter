@@ -16,6 +16,7 @@ func Unmarshal(bytes []byte) map[string]string {
 	return data
 }
 
+// exapmle of data ./stan-pub -c test-cluster -id stan-ex "dbproc" "{\"dbproc\":\"true\",\"codelen\":\"2\"}"
 func Checker(mapa map[string]string) (int, string){
 
 	codebool, codeint := checkCodeLen(mapa["codelen"])

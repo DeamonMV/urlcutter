@@ -47,6 +47,7 @@
 
 {"name":"dbproc",
 "title":"code",
+"msg":"done",
 "code":"%somecode%"}
 
 ### Общение dbproc и generator
@@ -57,6 +58,6 @@
 
 *сообщение в сторону dbproc*
 
-{"name":"generator","title":"code","msg":"%somecode%"}
+{"name":"generator","title":"code","msg":"done","code","%somecode%"}
 
 ## EN
